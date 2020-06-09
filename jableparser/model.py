@@ -68,7 +68,7 @@ class PageModel(object):
         tablestrs = ""
         items = region.xpath('.//text()|.//img|./table|//ul|//aside')
         contents = []
-        if not region.xpath('./table|//aside'):
+        if not region.xpath('./table'):
             added_tables = region.xpath('//table')
             items.extend(added_tables)
         othertable = self.simi_table(region)
