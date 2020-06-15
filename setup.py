@@ -7,7 +7,7 @@ except ImportError:
 setup(
     name='jableparser',
     author="qjfoidnh",
-    version='0.0.1',
+    version='0.0.2',
     author_email="qjfoidnh@126.com",
     license='MIT',
 
