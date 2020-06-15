@@ -14,7 +14,7 @@ def clean_tags_hasprop(page, tag, prop):
     return re.sub(reTRIM.format(tag,prop), "", page, flags=re.I)
 
 def clean_tags_only(page, tag):
-    reTRIM = r'<\/?{0}[^<>]*?>'
+    reTRIM = r'<\/?{0} [^<>]*?>|<\/?{0}>'
     return re.sub(reTRIM.format(tag), "", page, flags=re.I)
 
 def clean_tags_exactly(page, tag):
