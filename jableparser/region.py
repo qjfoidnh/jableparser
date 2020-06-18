@@ -8,7 +8,7 @@ class Region(object):
 
     def __init__(self, doc):
         self.doc = doc
-        self.max_depth = 4
+        self.max_depth = 6
         self.region_ratios = (0.6, 0.75, 1.0)
         self.min_sentence_len = 50
         self.max_sub_div_len = 10
