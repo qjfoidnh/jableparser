@@ -95,7 +95,8 @@ class PageModel(object):
                 if  parent_tag != winner_tag \
                     and len(self.stripper.sub("",txt)) < self.impurity_threshold \
                     and (parent_tag != 'li' \
-                    or len(self.stripper.sub("",txt)) < self.impurity_threshold_min):
+                    or len(self.stripper.sub("",txt)) < self.impurity_threshold_min) \
+                    or (parent_tag == 'li' and not txt.endswith('.')):
                     continue
                 if txt == "" or txt in tablestrs:
                     continue
