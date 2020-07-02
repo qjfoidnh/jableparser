@@ -46,8 +46,15 @@ class Region(object):
         unimportant_texts = set(self.doc.xpath("//a/text()|//dd//text()"))
         N_p = len(p_list)
         window_size = self.window_size
+        min_i = 0
+        for i,x in enumerate(p_list):
+            if len(self.stripper.sub("",x)) > self.min_sentence_len \
+                             and x not in unimportant_texts and "ookies" not in x and "Copyright":
+                min_i = i
+                break
         for region_ratio in self.region_ratios:
-            candidates  = [(len("".join([xx.strip() for xx in p_list[max(i-window_size,0):i+window_size]])) / log(i+e), x,i ) 
+#             candidates  = [(len("".join([xx.strip() for xx in p_list[max(i-window_size,0):i+window_size]])) / log(i+e), x,i ) 
+            candidates  = [(len("".join([xx.strip() for xx in p_list[max(i-window_size,0):i+window_size]])) / log(i-min_i+1+e), x,i-min_i+1 ) 
                             for i,x in enumerate(p_list) if i < N_p * region_ratio 
                              and len(self.stripper.sub("",x)) > self.min_sentence_len
                              and x not in unimportant_texts and "ookies" not in x and "Copyright" not in x]
