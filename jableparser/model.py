@@ -195,7 +195,8 @@ class PageModel(object):
         content = self.extract_content(region)
         return {"title":title , "content": content}
     
-    def processtable(self, table_str):
+    @staticmethod
+    def processtable(table_str):
         table = Bs(table_str, 'lxml')
         res_dict = []
         table = table.select_one('tbody') or table.select_one('aside') or table.select_one('ul') or table.select_one('table')
