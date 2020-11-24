@@ -52,6 +52,11 @@ class Region(object):
                              and x not in unimportant_texts and "ookies" not in x and "Copyright":
                 min_i = i
                 break
+        for i,x in enumerate(reversed(p_list)):
+            if len(self.stripper.sub("",x)) > self.min_sentence_len \
+                             and x not in unimportant_texts and "ookies" not in x and "Copyright":
+                max_i = len(p_list)-1-i
+                break
         for region_ratio in self.region_ratios:
 #             candidates  = [(len("".join([xx.strip() for xx in p_list[max(i-window_size,0):i+window_size]])) / log(i+e), x,i ) 
             candidates  = [(len("".join([xx.strip() for xx in p_list[max(i-window_size,0):i+window_size]])) / log(i-min_i+1+e), x,i-min_i+1 ) 
@@ -60,17 +65,31 @@ class Region(object):
                              and x not in unimportant_texts and "ookies" not in x and "Copyright" not in x]
             if len(candidates) >= self.candidates_count:
                 break
+            p_list.reverse()
+            candidates_r  = [(len("".join([xx.strip() for xx in p_list[max(i-window_size,0):i+window_size]])) / log(i-min_i+1+e), x,i-min_i+1 ) 
+                            for i,x in enumerate(p_list) if i < N_p * region_ratio 
+                             and len(self.stripper.sub("",x)) > self.min_sentence_len
+                             and x not in unimportant_texts and "ookies" not in x and "Copyright" not in x]
+            if len(candidates_r) >= self.candidates_count:
+                break
         top_list = heapq.nlargest(self.candidates_count, candidates)
+        tail_list = heapq.nlargest(self.candidates_count, candidates_r)
         if len(top_list) < 1:
             return None
+
         k1 = top_list[0][1]
-        n1 = top_list[0][2]
-        if len(top_list) < 2:
-            return k1.getparent()
-        neighbours = top_list[1:]
-        neighbours.sort(key = lambda x: -1*abs(x[2] - n1))
-        k2 = neighbours[0][1]
-        region = self.find_common_parent(k1, k2)
+        t1 = tail_list[0][1]
+        region = self.find_common_parent(k1, t1)
+        
+#         k1 = top_list[0][1]
+#         n1 = top_list[0][2]
+#         if len(top_list) < 2:
+#             return k1.getparent()
+#         neighbours = top_list[1:]
+#         neighbours.sort(key = lambda x: -1*abs(x[2] - n1))
+#         k2 = neighbours[0][1]
+#         region = self.find_common_parent(k1, k2)
+        
         sub_div_count =  len(region.xpath('./div'))
         sub_p_count =  len(region.xpath('./p'))
         if sub_div_count > self.max_sub_div_len and sub_div_count > sub_p_count:
