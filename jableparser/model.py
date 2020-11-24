@@ -16,6 +16,7 @@ from .region import Region
 
 
 class PageModel(object):
+    key_length = 19
     def __init__(self, page, url = ""):
         try:
             assert type(page) is unicode
@@ -36,7 +37,6 @@ class PageModel(object):
         self.anchor_ratio_limit = 0.3
         self.table_min_length = 2
         self.stripper = re.compile(r'\s+')
-        self.key_length = 19
         self.min_key_len = 1
         
 
@@ -195,8 +195,8 @@ class PageModel(object):
         content = self.extract_content(region)
         return {"title":title , "content": content}
     
-    @staticmethod
-    def processtable(table_str):
+    @classmethod
+    def processtable(cls, table_str):
         table = Bs(table_str, 'lxml')
         res_dict = []
         table = table.select_one('tbody') or table.select_one('aside') or table.select_one('ul') or table.select_one('table')
@@ -220,7 +220,7 @@ class PageModel(object):
                             if len(children)==2:
                                 res_dict.append((children[0].strip(), children[1].strip()))
                             elif len(children)==1:
-                                if len(gettext(children[0]).split())>1 and len(gettext(children[0]))>self.key_length:
+                                if len(gettext(children[0]).split())>1 and len(gettext(children[0]))>cls.key_length:
                                     res_dict.append((children[0].strip(), "Header"))
                             elif len(children)>2:
                                 continue
@@ -232,7 +232,7 @@ class PageModel(object):
                         return []
                     if len(children)==2:
                         res_dict.append((gettext(children[0]), gettext(children[1])))
-                    elif len(children)==1 and len(children[0].text.strip())>self.key_length:
+                    elif len(children)==1 and len(children[0].text.strip())>cls.key_length:
                         res_dict.append((gettext(children[0]), "Header"))
                     elif len(children)>2:
                         continue
@@ -247,7 +247,7 @@ class PageModel(object):
                     if len(re.split('[\s]{2}|:', gettext(children[0]), maxsplit=1))==2:
                         res_dict.append((re.split('[\s]{2}|:', gettext(children[0]), maxsplit=1)[0].strip(), re.split('[\s]{2}|:', gettext(children[0]), maxsplit=1)[1].strip()))
                     elif table.name!='ul':
-                        if len(gettext(children[0]).split())>1 and len(gettext(children[0]))>self.key_length:
+                        if len(gettext(children[0]).split())>1 and len(gettext(children[0]))>cls.key_length:
                             res_dict.append((gettext(children[0]), "Header"))
                 elif len(children)>2:
                     continue
